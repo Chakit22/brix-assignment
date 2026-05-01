@@ -91,3 +91,22 @@ export type JobsListResponse = {
 export type JobResponse = {
   job: Job;
 };
+
+export type Notification = {
+  id: string;
+  recipientUserId: string;
+  jobId: string;
+  type: NotificationType;
+  message: string;
+  readAt: string | null;
+  createdAt: string;
+};
+
+export type NotificationsListResponse = {
+  notifications: Notification[];
+  unreadCount: number;
+};
+
+export type NotificationResponse = {
+  notification: Notification;
+};

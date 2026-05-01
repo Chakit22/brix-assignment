@@ -4,6 +4,10 @@ import { createAuthRouter } from './routes/auth.js';
 import { quotesRouter } from './routes/quotes.js';
 import { usersRouter } from './routes/users.js';
 import { createJobsRouter, type JobsDeps } from './routes/jobs.js';
+import {
+  createNotificationsRouter,
+  type NotificationsDeps,
+} from './routes/notifications.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 export type UserRecord = {
@@ -19,9 +23,13 @@ export type AuthDeps = {
   findUserById: (id: string) => Promise<UserRecord | null>;
 };
 
-export type { JobsDeps };
+export type { JobsDeps, NotificationsDeps };
 
-export function createApp(deps?: AuthDeps, jobsDeps?: JobsDeps): Express {
+export function createApp(
+  deps?: AuthDeps,
+  jobsDeps?: JobsDeps,
+  notificationsDeps?: NotificationsDeps,
+): Express {
   const app = express();
   app.use(express.json());
 
@@ -39,6 +47,10 @@ export function createApp(deps?: AuthDeps, jobsDeps?: JobsDeps): Express {
 
   if (jobsDeps) {
     app.use('/jobs', createJobsRouter(jobsDeps));
+  }
+
+  if (notificationsDeps) {
+    app.use('/notifications', createNotificationsRouter(notificationsDeps));
   }
 
   app.use(errorHandler);
