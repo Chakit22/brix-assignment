@@ -1,6 +1,14 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import request from 'supertest';
-import { createApp } from './app.js';
+
+vi.stubEnv('DATABASE_URL', 'postgresql://fake');
+vi.stubEnv('JWT_SECRET', 'test-secret');
+
+vi.mock('./db/client.js', () => ({
+  db: { select: vi.fn() },
+}));
+
+const { createApp } = await import('./app.js');
 import type { HealthStatus } from '@brix/shared';
 
 describe('GET /health', () => {

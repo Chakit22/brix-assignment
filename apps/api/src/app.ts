@@ -1,6 +1,8 @@
 import express, { type Express } from 'express';
 import type { HealthStatus, UserRole } from '@brix/shared';
 import { createAuthRouter } from './routes/auth.js';
+import { quotesRouter } from './routes/quotes.js';
+import { usersRouter } from './routes/users.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 export type UserRecord = {
@@ -28,6 +30,9 @@ export function createApp(deps?: AuthDeps): Express {
   if (deps) {
     app.use('/auth', createAuthRouter(deps));
   }
+
+  app.use(quotesRouter);
+  app.use(usersRouter);
 
   app.use(errorHandler);
 
