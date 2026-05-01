@@ -50,10 +50,11 @@ export function ManagerSchedule() {
     const toISO = new Date(weekEnd).toISOString();
     const path = `/jobs?technicianId=${encodeURIComponent(technicianId)}&from=${encodeURIComponent(fromISO)}&to=${encodeURIComponent(toISO)}`;
     apiClient
-      .get<CalendarJob[]>(path)
+      .get<{ jobs: CalendarJob[] } | CalendarJob[]>(path)
       .then((data) => {
         if (cancelled) return;
-        setJobs(Array.isArray(data) ? data : []);
+        const list = Array.isArray(data) ? data : (data?.jobs ?? []);
+        setJobs(list);
         setLoadingJobs(false);
       })
       .catch((err: unknown) => {
