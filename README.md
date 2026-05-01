@@ -17,7 +17,7 @@ any websocket infrastructure.
 
 ### Demo credentials
 
-All seeded users share the password `password123`.
+All seeded users share a single password sent privately to the reviewer.
 
 | Role | Email |
 | --- | --- |
