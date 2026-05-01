@@ -3,6 +3,7 @@ import type { HealthStatus, UserRole } from '@brix/shared';
 import { createAuthRouter } from './routes/auth.js';
 import { quotesRouter } from './routes/quotes.js';
 import { usersRouter } from './routes/users.js';
+import { createJobsRouter, type JobsDeps } from './routes/jobs.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 export type UserRecord = {
@@ -18,7 +19,9 @@ export type AuthDeps = {
   findUserById: (id: string) => Promise<UserRecord | null>;
 };
 
-export function createApp(deps?: AuthDeps): Express {
+export type { JobsDeps };
+
+export function createApp(deps?: AuthDeps, jobsDeps?: JobsDeps): Express {
   const app = express();
   app.use(express.json());
 
@@ -33,6 +36,10 @@ export function createApp(deps?: AuthDeps): Express {
 
   app.use(quotesRouter);
   app.use(usersRouter);
+
+  if (jobsDeps) {
+    app.use('/jobs', createJobsRouter(jobsDeps));
+  }
 
   app.use(errorHandler);
 

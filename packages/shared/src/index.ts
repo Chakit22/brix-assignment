@@ -44,3 +44,50 @@ export type LoginResponse = {
 export type ErrorResponse = {
   error: string;
 };
+
+export type JobStatus = 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
+
+export type NotificationType =
+  | 'job_assigned'
+  | 'job_rescheduled'
+  | 'job_cancelled'
+  | 'job_completed';
+
+export type QuoteSummary = {
+  id: string;
+  title: string;
+  customerName: string;
+  address: string;
+  status: QuoteStatus;
+};
+
+export type Job = {
+  id: string;
+  quoteId: string;
+  technicianId: string;
+  managerId: string;
+  startTime: string;
+  endTime: string;
+  status: JobStatus;
+  quote: QuoteSummary;
+};
+
+export type CreateJobRequest = {
+  quoteId: string;
+  technicianId: string;
+  startTime: string;
+};
+
+export type PatchJobRequest = {
+  startTime?: string;
+  technicianId?: string;
+  status?: JobStatus;
+};
+
+export type JobsListResponse = {
+  jobs: Job[];
+};
+
+export type JobResponse = {
+  job: Job;
+};
