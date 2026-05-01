@@ -34,15 +34,57 @@ export const AUTH_STORAGE_KEY = 'brix.auth';
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+export class StorageUnavailableError extends Error {
+  constructor(message = 'Browser storage is unavailable.') {
+    super(message);
+    this.name = 'StorageUnavailableError';
+  }
+}
+
+function safeGetItem(key: string): string | null {
+  try {
+    return window.localStorage.getItem(key);
+  } catch (err) {
+    console.warn('localStorage.getItem failed', err);
+    return null;
+  }
+}
+
+function safeSetItem(key: string, value: string): void {
+  try {
+    window.localStorage.setItem(key, value);
+  } catch (err) {
+    console.warn('localStorage.setItem failed', err);
+    throw new StorageUnavailableError(
+      "Your browser is blocking site storage, so we can't keep you signed in.",
+    );
+  }
+}
+
+function safeRemoveItem(key: string): void {
+  try {
+    window.localStorage.removeItem(key);
+  } catch (err) {
+    console.warn('localStorage.removeItem failed', err);
+  }
+}
+
 function readSession(): AuthSession | null {
   if (typeof window === 'undefined') return null;
-  const raw = window.localStorage.getItem(AUTH_STORAGE_KEY);
+  const raw = safeGetItem(AUTH_STORAGE_KEY);
   if (!raw) return null;
   try {
     const parsed = JSON.parse(raw) as AuthSession;
-    if (parsed?.token && parsed.user?.id && parsed.user.role) return parsed;
+    if (
+      parsed?.token &&
+      parsed.user?.id &&
+      (parsed.user.role === 'manager' || parsed.user.role === 'technician')
+    ) {
+      return parsed;
+    }
     return null;
-  } catch {
+  } catch (err) {
+    console.warn('Failed to parse auth session from localStorage', err);
     return null;
   }
 }
@@ -55,9 +97,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [session?.token]);
 
   const logout = useCallback(() => {
-    window.localStorage.removeItem(AUTH_STORAGE_KEY);
-    apiClient.setToken(null);
     setSession(null);
+    apiClient.setToken(null);
+    safeRemoveItem(AUTH_STORAGE_KEY);
   }, []);
 
   useEffect(() => {
@@ -70,7 +112,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!next?.token || !next.user) {
       throw new ApiError(500, next, 'Malformed login response');
     }
-    window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(next));
+    safeSetItem(AUTH_STORAGE_KEY, JSON.stringify(next));
     apiClient.setToken(next.token);
     setSession(next);
     return next.user;

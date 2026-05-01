@@ -15,6 +15,13 @@ function Probe() {
       <div data-testid="token">{token ?? ''}</div>
       <button onClick={() => login('m@x.io', 'pw')}>login</button>
       <button onClick={() => logout()}>logout</button>
+      <button
+        onClick={() => {
+          apiClient.get('/me').catch(() => {});
+        }}
+      >
+        fetch-me
+      </button>
     </div>
   );
 }
@@ -119,14 +126,11 @@ describe('AuthProvider', () => {
     expect(screen.getByTestId('email').textContent).toBe('m@x.io');
 
     await act(async () => {
-      try {
-        await apiClient.get('/me');
-      } catch {
-        /* expected */
-      }
+      screen.getByText('fetch-me').click();
     });
 
     expect(screen.getByTestId('email').textContent).toBe('anon');
     expect(window.localStorage.getItem(AUTH_STORAGE_KEY)).toBeNull();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 });

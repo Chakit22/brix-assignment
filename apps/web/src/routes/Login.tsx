@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ApiError } from '../lib/api';
-import { homePathForRole, useAuth } from '../lib/auth';
+import { homePathForRole, StorageUnavailableError, useAuth } from '../lib/auth';
 
 export function Login() {
   const { login, user } = useAuth();
@@ -31,6 +31,8 @@ export function Login() {
       } else if (err instanceof ApiError) {
         const body = err.body as { error?: string } | null;
         setError(body?.error ?? 'Something went wrong. Please try again.');
+      } else if (err instanceof StorageUnavailableError) {
+        setError(err.message);
       } else {
         setError('Could not reach the server. Check your connection.');
       }
