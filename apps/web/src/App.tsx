@@ -3,6 +3,7 @@ import { AuthProvider, homePathForRole, useAuth } from './lib/auth';
 import { RequireAuth, RequireRole } from './components/RequireAuth';
 import { Login } from './routes/Login';
 import { ManagerHome } from './routes/ManagerHome';
+import { ManagerSchedule } from './routes/ManagerSchedule';
 import { TechnicianHome } from './routes/TechnicianHome';
 import { Inbox } from './routes/Inbox';
 import { NotFound } from './routes/NotFound';
@@ -25,6 +26,16 @@ export function App(): JSX.Element {
               <RequireAuth>
                 <RequireRole role="manager">
                   <ManagerHome />
+                </RequireRole>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/manager/schedule"
+            element={
+              <RequireAuth>
+                <RequireRole role="manager">
+                  <ManagerSchedule />
                 </RequireRole>
               </RequireAuth>
             }
