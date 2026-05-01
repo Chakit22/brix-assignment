@@ -40,7 +40,7 @@ export function NotificationBell() {
   const hasUnread = unreadCount > 0;
 
   return (
-    <div ref={containerRef} className="relative">
+    <div ref={containerRef} className="relative flex-shrink-0">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
@@ -68,7 +68,8 @@ export function NotificationBell() {
         <div
           role="dialog"
           aria-label="Notifications"
-          className="absolute right-0 mt-2 w-[22rem] max-w-[calc(100vw-2rem)] origin-top-right card overflow-hidden z-20"
+          className="fixed sm:absolute left-2 right-2 sm:left-auto sm:right-0 top-16 sm:top-auto sm:mt-2 w-auto sm:w-[22rem] origin-top-right card overflow-hidden z-50"
+          style={{ maxHeight: 'calc(100dvh - 5rem)' }}
         >
           <header className="flex items-center justify-between px-4 py-3 border-b border-border-subtle">
             <span className="text-sm font-semibold text-ink">Notifications</span>
@@ -77,7 +78,7 @@ export function NotificationBell() {
             </span>
           </header>
 
-          <div className="max-h-96 overflow-y-auto">
+          <div className="overflow-y-auto" style={{ maxHeight: 'min(384px, calc(100dvh - 12rem))' }}>
             {loading && visible.length === 0 ? (
               <p className="px-4 py-6 text-sm text-ink-muted">Loading…</p>
             ) : error ? (
