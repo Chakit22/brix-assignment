@@ -10,8 +10,10 @@ any websocket infrastructure.
 
 | | URL | Notes |
 | --- | --- | --- |
-| Web (Vercel) | `https://brix-web.vercel.app` | Replace with your deployment URL |
-| API (Render) | `https://brix-api.onrender.com` | `GET /health` returns `{ "status": "ok" }` |
+| Web (Vercel) | https://brix-web-smoky.vercel.app | React app — start here |
+| API (Render) | https://brix-api.onrender.com | `GET /health` returns `{ "status": "ok" }` |
+
+> Render's free tier sleeps the API after ~15 min of inactivity. The first request after a cold start can take ~30s while the dyno wakes up.
 
 ### Demo credentials
 
