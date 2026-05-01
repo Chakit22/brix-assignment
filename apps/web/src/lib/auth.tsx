@@ -90,7 +90,11 @@ function readSession(): AuthSession | null {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [session, setSession] = useState<AuthSession | null>(() => readSession());
+  const [session, setSession] = useState<AuthSession | null>(() => {
+    const restored = readSession();
+    if (restored?.token) apiClient.setToken(restored.token);
+    return restored;
+  });
 
   useEffect(() => {
     apiClient.setToken(session?.token ?? null);
