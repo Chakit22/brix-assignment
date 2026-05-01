@@ -5,12 +5,8 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { sql } from 'drizzle-orm';
 import { notifications, jobs, quotes, users } from './schema.js';
 
-// Demo credentials (DO NOT use in production):
-//   manager1@brix.local / password123
-//   manager2@brix.local / password123
-//   tech1@brix.local    / password123
-//   tech2@brix.local    / password123
-//   tech3@brix.local    / password123
+// Seed password is read from SEED_PASSWORD env var (set on Render).
+// For local dev a default is fine; production overrides it via env.
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
@@ -20,7 +16,7 @@ if (!connectionString) {
 const pool = new Pool({ connectionString });
 const db = drizzle(pool);
 
-const password = 'password123';
+const password = process.env.SEED_PASSWORD ?? 'change-me-locally';
 const passwordHash = await bcrypt.hash(password, 10);
 
 // Skip when the database is already populated. This keeps the seed safe to
