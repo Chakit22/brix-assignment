@@ -16,7 +16,9 @@
   },
   "dependencies": {
     "@brix/shared": "*",
+    "@types/cors": "^2.8.19",
     "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
     "express": "^4.21.1",
