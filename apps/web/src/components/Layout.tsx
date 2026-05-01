@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { homePathForRole, useAuth } from '../lib/auth';
+import { NotificationBell } from './NotificationBell';
 
 export function Layout({ children }: { children: ReactNode }) {
   const { user, logout } = useAuth();
@@ -46,6 +47,7 @@ export function Layout({ children }: { children: ReactNode }) {
                 Inbox
               </NavLink>
               <span className="mx-2 h-5 w-px bg-border-subtle" />
+              <NotificationBell />
               <span className="text-xs text-ink-subtle">
                 {user.email} · <span className="uppercase tracking-wider">{user.role}</span>
               </span>
