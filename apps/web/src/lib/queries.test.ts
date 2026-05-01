@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import { useTechnicians, useUnscheduledQuotes } from './queries';
+import { useTechnicians, useUnscheduledQuotes, useMyJobs } from './queries';
 
 const ORIGINAL_FETCH = globalThis.fetch;
 
@@ -60,6 +60,48 @@ describe('queries hooks', () => {
 
     const [url] = fetchMock.mock.calls[0]!;
     expect(String(url)).toContain('/quotes?status=unscheduled');
+  });
+
+  it('useMyJobs fetches /jobs?technicianId=<userId> and unwraps jobs array', async () => {
+    const fetchMock = vi.mocked(globalThis.fetch);
+    fetchMock.mockResolvedValueOnce(
+      jsonResponse({
+        jobs: [
+          {
+            id: 'job1',
+            quoteId: 'q1',
+            technicianId: 'tech-uuid',
+            managerId: 'm1',
+            startTime: '2026-05-01T09:00:00.000Z',
+            endTime: '2026-05-01T11:00:00.000Z',
+            status: 'scheduled',
+            quote: {
+              id: 'q1',
+              title: 'HVAC',
+              customerName: 'Alice',
+              address: '12 Smith St',
+              status: 'scheduled',
+            },
+          },
+        ],
+      }),
+    );
+
+    const { result } = renderHook(() => useMyJobs('tech-uuid'));
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.data).toHaveLength(1);
+    expect(result.current.data?.[0]?.id).toBe('job1');
+
+    const [url] = fetchMock.mock.calls[0]!;
+    expect(String(url)).toContain('/jobs?technicianId=tech-uuid');
+  });
+
+  it('useMyJobs does not fetch when userId is null', () => {
+    const fetchMock = vi.mocked(globalThis.fetch);
+    const { result } = renderHook(() => useMyJobs(null));
+    expect(result.current.loading).toBe(false);
+    expect(result.current.data).toEqual([]);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('exposes error when the request fails', async () => {

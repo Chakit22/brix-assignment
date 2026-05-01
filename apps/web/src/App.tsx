@@ -4,7 +4,7 @@ import { RequireAuth, RequireRole } from './components/RequireAuth';
 import { Login } from './routes/Login';
 import { ManagerHome } from './routes/ManagerHome';
 import { ManagerSchedule } from './routes/ManagerSchedule';
-import { TechnicianHome } from './routes/TechnicianHome';
+import { Technician } from './routes/Technician';
 import { Inbox } from './routes/Inbox';
 import { NotFound } from './routes/NotFound';
 
@@ -45,7 +45,7 @@ export function App(): JSX.Element {
             element={
               <RequireAuth>
                 <RequireRole role="technician">
-                  <TechnicianHome />
+                  <Technician />
                 </RequireRole>
               </RequireAuth>
             }
