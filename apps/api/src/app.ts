@@ -1,4 +1,5 @@
 import express, { type Express } from 'express';
+import cors from 'cors';
 import type { HealthStatus, UserRole } from '@brix/shared';
 import { createAuthRouter } from './routes/auth.js';
 import { quotesRouter } from './routes/quotes.js';
@@ -25,12 +26,30 @@ export type AuthDeps = {
 
 export type { JobsDeps, NotificationsDeps };
 
+function parseCorsOrigins(raw: string | undefined): string[] | undefined {
+  if (!raw) return undefined;
+  const list = raw
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  return list.length > 0 ? list : undefined;
+}
+
 export function createApp(
   deps?: AuthDeps,
   jobsDeps?: JobsDeps,
   notificationsDeps?: NotificationsDeps,
 ): Express {
   const app = express();
+
+  const allowedOrigins = parseCorsOrigins(process.env.CORS_ORIGIN);
+  app.use(
+    cors({
+      origin: allowedOrigins ?? true,
+      credentials: false,
+    }),
+  );
+
   app.use(express.json());
 
   app.get('/health', (_req, res) => {

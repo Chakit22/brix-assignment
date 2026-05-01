@@ -23,6 +23,15 @@ const db = drizzle(pool);
 const password = 'password123';
 const passwordHash = await bcrypt.hash(password, 10);
 
+// Skip when the database is already populated. This keeps the seed safe to
+// run on every Render deploy via `preDeployCommand` without nuking real data.
+const existingUsers = await db.select({ id: users.id }).from(users).limit(1);
+if (existingUsers.length > 0) {
+  console.log('seed skipped: users already present');
+  await pool.end();
+  process.exit(0);
+}
+
 await db.execute(
   sql`TRUNCATE TABLE ${notifications}, ${jobs}, ${quotes}, ${users} RESTART IDENTITY CASCADE`,
 );
