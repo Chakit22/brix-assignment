@@ -4,6 +4,7 @@ import { createApp } from './app.js';
 import type { AuthDeps, UserRecord } from './app.js';
 import { db } from './db/client.js';
 import { users } from './db/schema.js';
+import { createJobAssignmentService } from './services/jobAssignment.js';
 
 const port = Number(process.env.PORT) || 3001;
 
@@ -36,7 +37,8 @@ function toUserRecord(row: typeof users.$inferSelect): UserRecord {
   };
 }
 
-const app = createApp(deps);
+const jobsService = createJobAssignmentService(db);
+const app = createApp(deps, jobsService);
 
 app.listen(port, () => {
   console.log(`api listening on http://localhost:${port}`);

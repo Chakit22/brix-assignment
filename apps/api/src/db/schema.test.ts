@@ -85,6 +85,7 @@ describe('schema exports', () => {
       'job_assigned',
       'job_rescheduled',
       'job_cancelled',
+      'job_completed',
     ]);
   });
 });

@@ -24,6 +24,7 @@ export const notificationTypeEnum = pgEnum('notification_type', [
   'job_assigned',
   'job_rescheduled',
   'job_cancelled',
+  'job_completed',
 ]);
 
 export const users = pgTable('users', {
