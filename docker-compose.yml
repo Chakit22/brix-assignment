@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: brix-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: brix
+      POSTGRES_PASSWORD: brix
+      POSTGRES_DB: brix
+    ports:
+      - '5432:5432'
+    volumes:
+      - brix_postgres_data:/var/lib/postgresql/data
+      - ./apps/api/src/db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U brix -d brix']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  brix_postgres_data:
