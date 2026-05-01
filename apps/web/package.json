@@ -7,7 +7,6 @@
     "dev": "vite",
     "build": "tsc -p tsconfig.json && vite build",
     "preview": "vite preview",
-    "test": "echo \"no tests\" && exit 0",
     "lint": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {

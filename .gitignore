@@ -21,6 +21,3 @@ npm-debug.log*
 
 # test / coverage
 coverage/
-
-# vite
-apps/web/dist/
