@@ -119,6 +119,81 @@ export function getJobForSlot(
   );
 }
 
+export function formatTimeRange(startISO: string, endISO: string): string {
+  const fmt: Intl.DateTimeFormatOptions = { hour: 'numeric', minute: '2-digit' };
+  const start = new Date(startISO).toLocaleTimeString(undefined, fmt);
+  const end = new Date(endISO).toLocaleTimeString(undefined, fmt);
+  return `${start} – ${end}`;
+}
+
+function startOfDay(date: Date): Date {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+export function dayDeltaFromNow(target: Date, now: Date): number {
+  const a = startOfDay(target).getTime();
+  const b = startOfDay(now).getTime();
+  return Math.round((a - b) / (24 * 60 * 60 * 1000));
+}
+
+export function formatDayLabel(target: Date, now: Date): string {
+  const delta = dayDeltaFromNow(target, now);
+  if (delta === 0) return 'Today';
+  if (delta === 1) return 'Tomorrow';
+  return target.toLocaleDateString(undefined, {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
+export function formatLongDate(date: Date): string {
+  return date.toLocaleDateString(undefined, {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
+export type JobLike = {
+  id: string;
+  startTime: string;
+};
+
+export type JobGroup<J extends JobLike = JobLike> = {
+  key: string;
+  label: string;
+  date: Date;
+  jobs: J[];
+};
+
+export function groupJobsByDay<J extends JobLike>(jobs: J[], now: Date): JobGroup<J>[] {
+  const sorted = [...jobs].sort(
+    (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime(),
+  );
+  const groups = new Map<string, JobGroup<J>>();
+  for (const job of sorted) {
+    const day = startOfDay(new Date(job.startTime));
+    const key = day.toISOString();
+    let group = groups.get(key);
+    if (!group) {
+      group = {
+        key,
+        label: formatDayLabel(day, now),
+        date: day,
+        jobs: [],
+      };
+      groups.set(key, group);
+    }
+    group.jobs.push(job);
+  }
+  return [...groups.values()].sort(
+    (a, b) => a.date.getTime() - b.date.getTime(),
+  );
+}
+
 export function formatWeekRange(monday: Date): string {
   const sunday = addWeeks(monday, 1);
   sunday.setDate(sunday.getDate() - 1);
