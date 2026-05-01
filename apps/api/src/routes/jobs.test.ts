@@ -1,7 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import request from 'supertest';
 import bcrypt from 'bcryptjs';
-import { createApp } from '../app.js';
+
+vi.stubEnv('DATABASE_URL', 'postgresql://fake');
+vi.mock('../db/client.js', () => ({ db: { select: vi.fn() } }));
+
+const { createApp } = await import('../app.js');
 import type { AuthDeps, UserRecord, JobsDeps } from '../app.js';
 import type { Job, LoginResponse } from '@brix/shared';
 import { HttpError } from '../middleware/errorHandler.js';
