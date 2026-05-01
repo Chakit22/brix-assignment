@@ -228,6 +228,26 @@ exist, which makes it safe as a `preDeployCommand`.
 After both projects exist, set `CORS_ORIGIN` on the Render service to the
 Vercel domain (and any preview domains you want to allow, comma-separated).
 
+## Use of AI tools
+
+This project was built with Claude Code (Anthropic) as a pair-programming
+assistant. The workflow:
+
+- I broke the spec into 12 small Linear issues (PER-3 through PER-14), each
+  with concrete acceptance criteria.
+- Each issue ran in its own git worktree via the `/resolve` slash command,
+  which drives a TDD loop and opens a PR.
+- I reviewed every PR before merging; conflict resolution between parallel
+  branches (`app.ts` router mounts, `package-lock.json`) was done by hand.
+- The conflict-prevention design (transactional pre-check + Postgres EXCLUDE
+  + `23P01` → `409` translation) and the polling-over-websockets call were
+  decisions I made up-front before any code was generated; the agent
+  implemented to those constraints.
+
+The "Conflict handling" and "Trade-offs" sections above are the explicit
+answers to the spec's "explain your implementation, conflict handling, and
+trade-offs" requirement.
+
 ## Tests
 
 ```bash
