@@ -19,8 +19,14 @@ export function ManagerHome() {
       return;
     }
     setPrompt(null);
+    const tech = (techs.data ?? []).find((t) => t.id === selectedTechId);
     navigate('/manager/schedule', {
-      state: { quoteId: quote.id, technicianId: selectedTechId },
+      state: {
+        quoteId: quote.id,
+        technicianId: selectedTechId,
+        quoteName: quote.title,
+        techName: tech?.name ?? 'technician',
+      },
     });
   };
 
