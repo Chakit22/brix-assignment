@@ -1,12 +1,55 @@
-import type { HealthStatus } from '@brix/shared';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { AuthProvider, homePathForRole, useAuth } from './lib/auth';
+import { RequireAuth, RequireRole } from './components/RequireAuth';
+import { Login } from './routes/Login';
+import { ManagerHome } from './routes/ManagerHome';
+import { TechnicianHome } from './routes/TechnicianHome';
+import { Inbox } from './routes/Inbox';
+import { NotFound } from './routes/NotFound';
 
-const initialStatus: HealthStatus['status'] = 'ok';
+function RootRedirect() {
+  const { user } = useAuth();
+  return <Navigate to={user ? homePathForRole(user.role) : '/login'} replace />;
+}
 
 export function App(): JSX.Element {
   return (
-    <main style={{ fontFamily: 'system-ui, sans-serif', padding: 24 }}>
-      <h1>Brix</h1>
-      <p>scaffold ready ({initialStatus})</p>
-    </main>
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<RootRedirect />} />
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/manager"
+            element={
+              <RequireAuth>
+                <RequireRole role="manager">
+                  <ManagerHome />
+                </RequireRole>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/technician"
+            element={
+              <RequireAuth>
+                <RequireRole role="technician">
+                  <TechnicianHome />
+                </RequireRole>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/inbox"
+            element={
+              <RequireAuth>
+                <Inbox />
+              </RequireAuth>
+            }
+          />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }

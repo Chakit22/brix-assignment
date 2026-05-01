@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-bg-canvas text-ink font-sans antialiased;
+    background-image:
+      radial-gradient(800px 400px at 12% -10%, rgba(124, 77, 255, 0.18), transparent 60%),
+      radial-gradient(600px 360px at 90% 110%, rgba(106, 46, 255, 0.14), transparent 55%);
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    @apply bg-accent-purple-500/40 text-ink;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-bg-canvas;
+    @apply disabled:opacity-60 disabled:cursor-not-allowed;
+  }
+  .btn-primary {
+    @apply btn bg-accent-purple-600 text-white hover:bg-accent-purple-500 active:bg-accent-purple-700 shadow-glow;
+  }
+  .btn-ghost {
+    @apply btn bg-transparent text-ink-muted hover:text-ink hover:bg-bg-elevated;
+  }
+
+  .field {
+    @apply flex flex-col gap-1.5;
+  }
+  .field-label {
+    @apply text-xs uppercase tracking-wider text-ink-muted;
+  }
+  .input {
+    @apply w-full rounded-md bg-bg-elevated/80 border border-border-subtle px-3 py-2 text-sm text-ink placeholder:text-ink-subtle;
+    @apply focus:outline-none focus:border-accent-purple-500 focus:ring-2 focus:ring-accent-purple-500/30;
+  }
+
+  .card {
+    @apply rounded-xl border border-border-subtle bg-bg-surface/90 shadow-soft backdrop-blur;
+  }
+}
