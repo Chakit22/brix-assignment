@@ -1,7 +1,22 @@
 import express, { type Express } from 'express';
-import type { HealthStatus } from '@brix/shared';
+import type { HealthStatus, UserRole } from '@brix/shared';
+import { createAuthRouter } from './routes/auth.js';
+import { errorHandler } from './middleware/errorHandler.js';
 
-export function createApp(): Express {
+export type UserRecord = {
+  id: string;
+  email: string;
+  name: string;
+  role: UserRole;
+  passwordHash: string;
+};
+
+export type AuthDeps = {
+  findUserByEmail: (email: string) => Promise<UserRecord | null>;
+  findUserById: (id: string) => Promise<UserRecord | null>;
+};
+
+export function createApp(deps?: AuthDeps): Express {
   const app = express();
   app.use(express.json());
 
@@ -9,6 +24,12 @@ export function createApp(): Express {
     const body: HealthStatus = { status: 'ok' };
     res.status(200).json(body);
   });
+
+  if (deps) {
+    app.use('/auth', createAuthRouter(deps));
+  }
+
+  app.use(errorHandler);
 
   return app;
 }
